@@ -1,2 +1,40 @@
 @use 'config';
 @import "~bootstrap/scss/bootstrap";
+
+
+.bg-secondary {
+    background-color: config.$bg-secondary  !important;
+}
+
+#search-bar {
+    font-size: 1.5rem;
+    border-radius: 3px;
+
+    #button-addon {
+        font-size: 1.5rem;
+    }
+}
+
+input {
+    height: 40px;
+}
+
+.dropdown-toggle::after {
+    margin-left: 1.3em !important;
+}
+
+#filters-buttons {
+    button {
+        height: 60px;
+    }
+}
+
+.dropdown-menu.show {
+    display: flex;
+    flex-wrap: wrap;
+
+    /*  li {
+        flex: 33%;
+        text-overflow: ellipsis;
+    } */
+}
