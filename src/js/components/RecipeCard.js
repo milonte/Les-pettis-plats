@@ -8,31 +8,25 @@ export default class RecipeCard {
      */
     getDOMElement() {
         const { id, name, servings, ingredients, time, description, appliance, ustensils } = this.data;
-
         const card = document.createElement('div');
         card.classList.add('card', "col-xs-12", "col-sm-6", "col-lg-4", "mt-3", "p-2");
-
         const ingredientsDiv = document.createElement("div");
         ingredientsDiv.classList.add('recipe-ingredients');
-
         ingredients.forEach(ingr => {
             const ingrDiv = document.createElement("div");
-
-            for (let [key, value] of Object.entries(ingr)) {
-
+            for (const [key, value] of Object.entries(ingr)) {
                 const span = document.createElement("span");
                 span.classList.add('recipe-' + key);
-
                 if ("unit" == key && "grammes" == value) {
-                    value = "g";
+                    span.innerHTML = "g";
                 }
-                span.innerHTML = value;
-
+                else {
+                    span.innerHTML = value;
+                }
                 ingrDiv.appendChild(span);
             }
             ingredientsDiv.appendChild(ingrDiv);
         });
-
         card.innerHTML = `
             <div class="card-header p-0">
                 <img class="card-img-top img-fluid" src="https://via.placeholder.com/400">
@@ -64,7 +58,6 @@ export default class RecipeCard {
                 </div>
             </div>
         `;
-
         return card;
     }
 }

@@ -10,7 +10,7 @@ export default class KeyFilterPill {
 
     getDOMElement() { 
         
-        const filtersResultsSections: HTMLElement = document.getElementById("filters-results");
+        const filtersResultsSections: HTMLElement | null = document.getElementById("filters-results");
 
         const pillButtonElement : HTMLElement = document.createElement("button");
         pillButtonElement.classList.add("btn", this.type + "-filter-pill", "mx-2");
@@ -41,7 +41,11 @@ export default class KeyFilterPill {
         }
 
         pillButtonElement.addEventListener("click", () => {
-            filtersResultsSections.removeChild(document.querySelector(`.btn[data-value='${this.name}']`));
+            const pillToRemove: HTMLElement | null = document.querySelector(`.btn[data-value='${this.name}']`);
+
+            if (filtersResultsSections && pillToRemove) {
+                filtersResultsSections.removeChild(pillToRemove);
+            }
         });
 
         return pillButtonElement;

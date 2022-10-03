@@ -29,7 +29,10 @@ export default class KeyFilterPill {
                 break;
         }
         pillButtonElement.addEventListener("click", () => {
-            filtersResultsSections.removeChild(document.querySelector(`.btn[data-value='${this.name}']`));
+            const pillToRemove = document.querySelector(`.btn[data-value='${this.name}']`);
+            if (filtersResultsSections && pillToRemove) {
+                filtersResultsSections.removeChild(pillToRemove);
+            }
         });
         return pillButtonElement;
     }
