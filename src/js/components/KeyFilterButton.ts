@@ -107,10 +107,10 @@ export default class KeyFilterButton {
         /* 
             Triggered when filter input change
         */
-        filterInput.addEventListener('input', (e) => {
+        filterInput.addEventListener('input', (e : any) => {
             // Value of input field
             const searchValue : string = e.target.value.toLowerCase();
-            let item: HTMLElement;
+            let item: any;
 
             // Hide / Show filter item on list
             for (item of filterList.children) { 
@@ -128,7 +128,7 @@ export default class KeyFilterButton {
             Filter change value Listener
         */
         for (const item of filterList.children) { 
-            item.addEventListener('click', (e) => {
+            item.addEventListener('click', (e: any) => {
 
                 const value = e.target.parentNode.title;
 

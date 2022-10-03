@@ -5,8 +5,10 @@ import 'bootstrap';
 import { recipes } from '../../data/recipes';
 import KeyFilter from './components/KeyFilterButton';
 import KeyFilterPill from './components/KeyFilterPill';
+import RecipeCard from './components/RecipeCard';
 const filtersResultsSections = document.getElementById("filters-results");
 const filtersButtonsSections = document.getElementById("filters-buttons");
+const recipesSection = document.getElementById("recipes-container");
 const ingredients = [];
 const appliances = [];
 const ustensils = [];
@@ -19,15 +21,19 @@ recipes.forEach(recipe => {
         !ustensils.includes(ustensil) ? ustensils.push(ustensil) : null;
     });
 });
+recipes.forEach(recipe => {
+    const recipeCard = new RecipeCard(recipe).getDOMElement();
+    recipesSection === null || recipesSection === void 0 ? void 0 : recipesSection.appendChild(recipeCard);
+});
 /*
     Filters Buttons
 */
 const ingredientsFilter = new KeyFilter("ingredients", ingredients, drawPillCallback).getDOMElement();
 const appliancesFilter = new KeyFilter("appliances", appliances, drawPillCallback).getDOMElement();
 const ustensilsFilter = new KeyFilter("ustensils", ustensils, drawPillCallback).getDOMElement();
-filtersButtonsSections.appendChild(ingredientsFilter);
-filtersButtonsSections.appendChild(appliancesFilter);
-filtersButtonsSections.appendChild(ustensilsFilter);
+filtersButtonsSections === null || filtersButtonsSections === void 0 ? void 0 : filtersButtonsSections.appendChild(ingredientsFilter);
+filtersButtonsSections === null || filtersButtonsSections === void 0 ? void 0 : filtersButtonsSections.appendChild(appliancesFilter);
+filtersButtonsSections === null || filtersButtonsSections === void 0 ? void 0 : filtersButtonsSections.appendChild(ustensilsFilter);
 /*
     Filters Pills
 */
@@ -38,6 +44,6 @@ function drawPillCallback(type, value) {
     }
     else {
         const pillButtonElement = new KeyFilterPill(type, value).getDOMElement();
-        filtersResultsSections.appendChild(pillButtonElement);
+        filtersResultsSections === null || filtersResultsSections === void 0 ? void 0 : filtersResultsSections.appendChild(pillButtonElement);
     }
 }

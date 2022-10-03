@@ -15,6 +15,48 @@
     }
 }
 
+.card {
+    border: 0;
+
+    .card-header {
+        display: flex;
+        max-height: 150px;
+        overflow: hidden;
+        justify-content: center;
+
+        img {
+            object-fit: cover;
+        }
+    }
+
+    .card-body {
+        font-size: .75em;
+        background-color: config.$bg-secondary;
+        line-height: 1em;
+
+        .recipe-name {
+            font-size: 1.3rem;
+        }
+
+        .recipe-time {
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .recipe-ingredient {
+            .recipe-ingredient {
+                font-weight: bold;
+
+                &::after {
+                    content: ": ";
+                }
+            }
+        }
+
+        .recipe-description {}
+    }
+}
+
 input {
     height: 40px;
 }

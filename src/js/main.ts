@@ -6,9 +6,11 @@ import 'bootstrap';
 import { recipes } from '../../data/recipes';
 import KeyFilter from './components/KeyFilterButton';
 import KeyFilterPill from './components/KeyFilterPill';
+import RecipeCard from './components/RecipeCard';
 
-const filtersResultsSections: HTMLElement = document.getElementById("filters-results");
-const filtersButtonsSections: HTMLElement = document.getElementById("filters-buttons");
+const filtersResultsSections: HTMLElement | null = document.getElementById("filters-results");
+const filtersButtonsSections: HTMLElement | null = document.getElementById("filters-buttons");
+const recipesSection: HTMLElement | null = document.getElementById("recipes-container");
 
 const ingredients : Array<string> = [];
 const appliances : Array<string> = [];
@@ -24,6 +26,11 @@ recipes.forEach(recipe => {
     });
 });
 
+recipes.forEach(recipe => { 
+    const recipeCard = new RecipeCard(recipe).getDOMElement();
+
+    recipesSection?.appendChild(recipeCard);
+});
 
 /*
     Filters Buttons
@@ -32,9 +39,9 @@ const ingredientsFilter = new KeyFilter("ingredients", ingredients, drawPillCall
 const appliancesFilter = new KeyFilter("appliances", appliances, drawPillCallback).getDOMElement();
 const ustensilsFilter = new KeyFilter("ustensils", ustensils, drawPillCallback).getDOMElement();
 
-filtersButtonsSections.appendChild(ingredientsFilter);
-filtersButtonsSections.appendChild(appliancesFilter);
-filtersButtonsSections.appendChild(ustensilsFilter);
+filtersButtonsSections?.appendChild(ingredientsFilter);
+filtersButtonsSections?.appendChild(appliancesFilter);
+filtersButtonsSections?.appendChild(ustensilsFilter);
 
 
 /* 
@@ -49,7 +56,7 @@ function drawPillCallback(type: string, value: string) {
 
         const pillButtonElement = new KeyFilterPill(type, value).getDOMElement();
 
-        filtersResultsSections.appendChild(pillButtonElement);
+        filtersResultsSections?.appendChild(pillButtonElement);
     }
 
 
