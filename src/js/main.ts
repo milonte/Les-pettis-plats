@@ -15,10 +15,6 @@ const recipesSection: HTMLElement | null = document.getElementById("recipes-cont
 
 const recipeSearch: HTMLElement | null = document.getElementById("recipe-search");
 
-const ingredients : Array<string> = [];
-const appliances : Array<string> = [];
-const ustensils: Array<string> = [];
-
 const filters = {
     'search': '',
     'ingredients': [],
@@ -105,17 +101,7 @@ function getRecipes() {
     });
     
     /* update filters buttons */
-    recipesToDisplay.forEach(recipe => { 
-        recipe.ingredients.forEach(ingredient => {
-            if (!ingredients.includes(ingredient.ingredient)) {
-                ingredients.push(ingredient.ingredient);
-            }
-        });
-        !appliances.includes(recipe.appliance) ? appliances.push(recipe.appliance) : null;
-        recipe.ustensils.forEach(ustensil => {
-            !ustensils.includes(ustensil) ? ustensils.push(ustensil) : null;
-        });
-    });
+    displayFiltersButtons(recipesToDisplay);
 
     return recipesToDisplay;
 }
@@ -163,13 +149,36 @@ recipeSearch?.addEventListener('input', (e : any) => {
 /*
     Filters Buttons
 */
-const ingredientsFilter = new KeyFilter("ingredients", ingredients, drawPillCallback).getDOMElement();
-const appliancesFilter = new KeyFilter("appliances", appliances, drawPillCallback).getDOMElement();
-const ustensilsFilter = new KeyFilter("ustensils", ustensils, drawPillCallback).getDOMElement();
+function displayFiltersButtons(recipes: Array<RecipeModel>) {
 
-filtersButtonsSections?.appendChild(ingredientsFilter);
-filtersButtonsSections?.appendChild(appliancesFilter);
-filtersButtonsSections?.appendChild(ustensilsFilter);
+    const ingredients : Array<string> = [];
+    const appliances : Array<string> = [];
+    const ustensils: Array<string> = [];
+
+    recipes.forEach((recipe: RecipeModel) => { 
+        recipe.ingredients.forEach(ingredient => {
+            if (!ingredients.includes(ingredient.ingredient)) {
+                ingredients.push(ingredient.ingredient);
+            }
+        });
+        !appliances.includes(recipe.appliance) ? appliances.push(recipe.appliance) : null;
+        recipe.ustensils.forEach(ustensil => {
+            !ustensils.includes(ustensil) ? ustensils.push(ustensil) : null;
+        });
+    });
+
+    const ingredientsFilter = new KeyFilter("ingredients", ingredients, drawPillCallback).getDOMElement();
+    const appliancesFilter = new KeyFilter("appliances", appliances, drawPillCallback).getDOMElement();
+    const ustensilsFilter = new KeyFilter("ustensils", ustensils, drawPillCallback).getDOMElement();
+
+    if (filtersButtonsSections) {
+        filtersButtonsSections.innerHTML = "";
+        
+        filtersButtonsSections.appendChild(ingredientsFilter);
+        filtersButtonsSections.appendChild(appliancesFilter);
+        filtersButtonsSections.appendChild(ustensilsFilter);
+    }
+}
 
 
 /* 
@@ -186,7 +195,6 @@ function drawPillCallback(type: string, value: string) {
             filtersResultsSections?.appendChild(pillButtonElement);
             
             addRecipeFilter(type, value);
-            console.log(filters)
         }
     
 }

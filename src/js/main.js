@@ -10,9 +10,6 @@ const filtersResultsSections = document.getElementById("filters-results");
 const filtersButtonsSections = document.getElementById("filters-buttons");
 const recipesSection = document.getElementById("recipes-container");
 const recipeSearch = document.getElementById("recipe-search");
-const ingredients = [];
-const appliances = [];
-const ustensils = [];
 const filters = {
     'search': '',
     'ingredients': [],
@@ -85,17 +82,7 @@ function getRecipes() {
         return recipe;
     });
     /* update filters buttons */
-    recipesToDisplay.forEach(recipe => {
-        recipe.ingredients.forEach(ingredient => {
-            if (!ingredients.includes(ingredient.ingredient)) {
-                ingredients.push(ingredient.ingredient);
-            }
-        });
-        !appliances.includes(recipe.appliance) ? appliances.push(recipe.appliance) : null;
-        recipe.ustensils.forEach(ustensil => {
-            !ustensils.includes(ustensil) ? ustensils.push(ustensil) : null;
-        });
-    });
+    displayFiltersButtons(recipesToDisplay);
     return recipesToDisplay;
 }
 function displayRecipesCards() {
@@ -130,12 +117,31 @@ recipeSearch === null || recipeSearch === void 0 ? void 0 : recipeSearch.addEven
 /*
     Filters Buttons
 */
-const ingredientsFilter = new KeyFilter("ingredients", ingredients, drawPillCallback).getDOMElement();
-const appliancesFilter = new KeyFilter("appliances", appliances, drawPillCallback).getDOMElement();
-const ustensilsFilter = new KeyFilter("ustensils", ustensils, drawPillCallback).getDOMElement();
-filtersButtonsSections === null || filtersButtonsSections === void 0 ? void 0 : filtersButtonsSections.appendChild(ingredientsFilter);
-filtersButtonsSections === null || filtersButtonsSections === void 0 ? void 0 : filtersButtonsSections.appendChild(appliancesFilter);
-filtersButtonsSections === null || filtersButtonsSections === void 0 ? void 0 : filtersButtonsSections.appendChild(ustensilsFilter);
+function displayFiltersButtons(recipes) {
+    const ingredients = [];
+    const appliances = [];
+    const ustensils = [];
+    recipes.forEach((recipe) => {
+        recipe.ingredients.forEach(ingredient => {
+            if (!ingredients.includes(ingredient.ingredient)) {
+                ingredients.push(ingredient.ingredient);
+            }
+        });
+        !appliances.includes(recipe.appliance) ? appliances.push(recipe.appliance) : null;
+        recipe.ustensils.forEach(ustensil => {
+            !ustensils.includes(ustensil) ? ustensils.push(ustensil) : null;
+        });
+    });
+    const ingredientsFilter = new KeyFilter("ingredients", ingredients, drawPillCallback).getDOMElement();
+    const appliancesFilter = new KeyFilter("appliances", appliances, drawPillCallback).getDOMElement();
+    const ustensilsFilter = new KeyFilter("ustensils", ustensils, drawPillCallback).getDOMElement();
+    if (filtersButtonsSections) {
+        filtersButtonsSections.innerHTML = "";
+        filtersButtonsSections.appendChild(ingredientsFilter);
+        filtersButtonsSections.appendChild(appliancesFilter);
+        filtersButtonsSections.appendChild(ustensilsFilter);
+    }
+}
 /*
     Filters Pills
 */
@@ -148,6 +154,5 @@ function drawPillCallback(type, value) {
         const pillButtonElement = new KeyFilterPill(type, value, removeRecipeFilter).getDOMElement();
         filtersResultsSections === null || filtersResultsSections === void 0 ? void 0 : filtersResultsSections.appendChild(pillButtonElement);
         addRecipeFilter(type, value);
-        console.log(filters);
     }
 }
