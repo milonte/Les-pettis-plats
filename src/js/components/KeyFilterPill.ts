@@ -2,10 +2,12 @@ export default class KeyFilterPill {
 
     type: string;
     name: string;
+    erasePillCallbackFunction: CallableFunction;
 
-    constructor(type: string, name: string) {
+    constructor(type: string, name: string,  erasePillCallbackFunction : CallableFunction) {
         this.type = type;
         this.name = name;
+        this.erasePillCallbackFunction = erasePillCallbackFunction;
     }
 
     getDOMElement() { 
@@ -45,6 +47,7 @@ export default class KeyFilterPill {
 
             if (filtersResultsSections && pillToRemove) {
                 filtersResultsSections.removeChild(pillToRemove);
+                this.erasePillCallbackFunction(this.type, this.name);
             }
         });
 

@@ -13,55 +13,105 @@ const recipeSearch = document.getElementById("recipe-search");
 const ingredients = [];
 const appliances = [];
 const ustensils = [];
+const filters = {
+    'search': '',
+    'ingredients': [],
+    'appliances': [],
+    'ustensils': []
+};
+function addRecipeFilter(key, value) {
+    const beforeFilters = filters;
+    if ('search' == key) {
+        filters['search'] = value;
+    }
+    else {
+        if (filters[key] && !filters[key].includes(value)) {
+            filters[key].push(value);
+        }
+    }
+    if (beforeFilters == filters) {
+        displayRecipesCards();
+    }
+}
+function removeRecipeFilter(key, value) {
+    const beforeFilters = filters;
+    if (filters[key].includes(value)) {
+        filters[key].splice(filters[key].indexOf(value), 1);
+    }
+    if (beforeFilters == filters) {
+        displayRecipesCards();
+    }
+}
 function getRecipes() {
-    recipes.forEach(recipe => {
+    const recipesToDisplay = recipes.filter((recipe) => {
+        // search bar filter 
+        if (filters['search'].length > 2 && !recipe.name.toLowerCase().includes(filters['search'].toLowerCase())) {
+            return false;
+        }
+        // ingredients filter
+        if (filters['ingredients'].length > 0) {
+            for (const filterIngredient of filters['ingredients']) {
+                let recipeHaveIngredient = false;
+                for (const recipeIngredient of recipe.ingredients) {
+                    if (recipeIngredient.ingredient.toLowerCase() == filterIngredient.toLowerCase()) {
+                        recipeHaveIngredient = true;
+                    }
+                }
+                if (!recipeHaveIngredient) {
+                    return false;
+                }
+            }
+        }
+        if (filters['ustensils'].length > 0) {
+            for (const filterUstensils of filters['ustensils']) {
+                let recipeHaveUstensil = false;
+                for (const recipeUstensil of recipe.ustensils) {
+                    if (recipeUstensil.toLowerCase() == filterUstensils.toLowerCase()) {
+                        recipeHaveUstensil = true;
+                    }
+                }
+                if (!recipeHaveUstensil) {
+                    return false;
+                }
+            }
+        }
+        if (filters['appliances'].length > 0) {
+            for (const filterAppliance of filters['appliances']) {
+                if (recipe.appliance.toLowerCase() !== filterAppliance.toLowerCase()) {
+                    return false;
+                }
+            }
+        }
+        return recipe;
+    });
+    /* update filters buttons */
+    recipesToDisplay.forEach(recipe => {
         recipe.ingredients.forEach(ingredient => {
-            !ingredients.includes(ingredient.ingredient) ? ingredients.push(ingredient.ingredient) : null;
+            if (!ingredients.includes(ingredient.ingredient)) {
+                ingredients.push(ingredient.ingredient);
+            }
         });
         !appliances.includes(recipe.appliance) ? appliances.push(recipe.appliance) : null;
         recipe.ustensils.forEach(ustensil => {
             !ustensils.includes(ustensil) ? ustensils.push(ustensil) : null;
         });
     });
-    return recipes;
+    return recipesToDisplay;
 }
-function displayRecipesCards(recipesFilters = null) {
+function displayRecipesCards() {
     const recipes = getRecipes();
-    const recipesToDisplay = [];
     clearRecipesCard();
-    /* filter recipes if filters fund */
-    if (recipesFilters) {
-        for (const [key, value] of Object.entries(recipesFilters[0])) {
-            if ("search" == key) {
-                recipesToDisplay.push(recipes.filter(recipe => {
-                    if (
-                    /* if search value is in recipe name*/
-                    recipe.name.toLowerCase().includes(value.toLowerCase())
-                        /* or if search value is contains in recipe description */
-                        || recipe.description.toLowerCase().includes(value.toLowerCase())
-                        /* or if search value is contains in recpide ringredeints list */
-                        || recipe.ingredients.map(ingr => ingr.ingredient.toLowerCase().includes(value.toLowerCase())).includes(true)) {
-                        return recipe;
-                    }
-                }));
-            }
-        }
-    }
-    else {
-        recipesToDisplay.push(recipes);
-    }
-    if (recipesToDisplay[0].length <= 0) {
+    if (recipes.length <= 0) {
         const noResultDiv = document.createElement("div");
         noResultDiv.innerHTML = '« Aucune recette ne correspond à votre critère... vous pouvez chercher « tarte aux pommes », « poisson », etc';
         recipesSection === null || recipesSection === void 0 ? void 0 : recipesSection.appendChild(noResultDiv);
     }
-    /*
-        Display recipes cards
-    */
-    recipesToDisplay[0].forEach((recipe) => {
-        const recipeCard = new RecipeCard(recipe).getDOMElement();
-        recipesSection === null || recipesSection === void 0 ? void 0 : recipesSection.appendChild(recipeCard);
-    });
+    else {
+        recipes.forEach((recipe) => {
+            const recipeCard = new RecipeCard(recipe).getDOMElement();
+            recipesSection === null || recipesSection === void 0 ? void 0 : recipesSection.appendChild(recipeCard);
+        });
+    }
 }
 function clearRecipesCard() {
     if (recipesSection) {
@@ -74,15 +124,8 @@ displayRecipesCards();
 */
 recipeSearch === null || recipeSearch === void 0 ? void 0 : recipeSearch.addEventListener('input', (e) => {
     const searchValue = e.target.value;
-    if (searchValue.length > 2) {
-        displayRecipesCards([{
-                'search': searchValue,
-                'search2': searchValue
-            }]);
-    }
-    else {
-        displayRecipesCards();
-    }
+    addRecipeFilter('search', searchValue);
+    displayRecipesCards();
 });
 /*
     Filters Buttons
@@ -102,7 +145,9 @@ function drawPillCallback(type, value) {
         return;
     }
     else {
-        const pillButtonElement = new KeyFilterPill(type, value).getDOMElement();
+        const pillButtonElement = new KeyFilterPill(type, value, removeRecipeFilter).getDOMElement();
         filtersResultsSections === null || filtersResultsSections === void 0 ? void 0 : filtersResultsSections.appendChild(pillButtonElement);
+        addRecipeFilter(type, value);
+        console.log(filters);
     }
 }

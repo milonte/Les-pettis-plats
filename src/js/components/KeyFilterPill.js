@@ -1,7 +1,8 @@
 export default class KeyFilterPill {
-    constructor(type, name) {
+    constructor(type, name, erasePillCallbackFunction) {
         this.type = type;
         this.name = name;
+        this.erasePillCallbackFunction = erasePillCallbackFunction;
     }
     getDOMElement() {
         const filtersResultsSections = document.getElementById("filters-results");
@@ -32,6 +33,7 @@ export default class KeyFilterPill {
             const pillToRemove = document.querySelector(`.btn[data-value='${this.name}']`);
             if (filtersResultsSections && pillToRemove) {
                 filtersResultsSections.removeChild(pillToRemove);
+                this.erasePillCallbackFunction(this.type, this.name);
             }
         });
         return pillButtonElement;
