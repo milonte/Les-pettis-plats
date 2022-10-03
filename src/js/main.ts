@@ -30,13 +30,15 @@ const filters: FiltersModel = {
  * @param value value of filter
  */
 function addRecipeFilter(key: string, value: string): void {
-    const beforeFilters = filters;
+    const beforeFilters: FiltersModel = filters;
     if ('search' == key) {
         filters['search'] = value;
-    } else {
-        if (filters[key] && !filters[key].includes(value)) {
-            filters[key].push(value);
-        }
+    } else if ('ingredients' == key && !filters['ingredients'].includes(value)) {
+        filters['ingredients'].push(value);
+    } else if ('appliances' == key && !filters['appliances'].includes(value)) {
+        filters['appliances'].push(value);
+    } else if ('ustensils' == key && !filters['ustensils'].includes(value)) {
+        filters['ustensils'].push(value);
     }
 
     if (beforeFilters == filters) {
@@ -52,8 +54,12 @@ function addRecipeFilter(key: string, value: string): void {
  */
 function removeRecipeFilter(key: string, value: string): void {
     const beforeFilters = filters;
-    if (filters[key].includes(value)) {
-        filters[key].splice(filters[key].indexOf(value), 1);
+    if ('ingredients' == key && filters['ingredients'].includes(value)) {
+        filters['ingredients'].splice(filters['ingredients'].indexOf(value), 1);
+    } else if ('appliances' == key && filters['appliances'].includes(value)) {
+        filters['appliances'].splice(filters['appliances'].indexOf(value), 1);
+    } else if ('ustensils' == key && filters['ustensils'].includes(value)) {
+        filters['ustensils'].splice(filters['ustensils'].indexOf(value), 1); 
     }
 
     if (beforeFilters == filters) {
@@ -70,8 +76,14 @@ function getRecipes(): Array<RecipeModel> {
     const recipesToDisplay = recipes.filter((recipe: RecipeModel) => {
 
         // search bar filter 
-        if (filters['search'].length > 2 && !recipe.name.toLowerCase().includes(filters['search'].toLowerCase()) ) {
-            return false;
+        if (filters['search'].length > 2) {
+            if (
+                !recipe.name.toLowerCase().includes(filters['search'].toLowerCase())
+                && !recipe.description.toLowerCase().includes(filters['search'].toLowerCase())
+                && !recipe.ingredients.some(ingredient => ingredient.ingredient.toLowerCase().includes(filters['search'].toLowerCase()))
+            ) {
+                return false;
+            } 
         }
 
         // ingredients filter
