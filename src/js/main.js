@@ -16,6 +16,12 @@ const filters = {
     'appliances': [],
     'ustensils': []
 };
+/**
+ * Add filter to recipe filters list
+ * and display corresponding recipes
+ * @param key type of filter
+ * @param value value of filter
+ */
 function addRecipeFilter(key, value) {
     const beforeFilters = filters;
     if ('search' == key) {
@@ -30,6 +36,12 @@ function addRecipeFilter(key, value) {
         displayRecipesCards();
     }
 }
+/**
+ * Remove filter from recipe filters list
+ * and display corresponding recipes
+ * @param key type of filter
+ * @param value value of filter
+ */
 function removeRecipeFilter(key, value) {
     const beforeFilters = filters;
     if (filters[key].includes(value)) {
@@ -39,6 +51,10 @@ function removeRecipeFilter(key, value) {
         displayRecipesCards();
     }
 }
+/**
+ * Get recipes corresponding to filters
+ * @returns {Array<RecipeModel>}
+ */
 function getRecipes() {
     const recipesToDisplay = recipes.filter((recipe) => {
         // search bar filter 
@@ -47,7 +63,8 @@ function getRecipes() {
         }
         // ingredients filter
         if (filters['ingredients'].length > 0) {
-            for (const filterIngredient of filters['ingredients']) {
+            let filterIngredient = "";
+            for (filterIngredient of filters['ingredients']) {
                 let recipeHaveIngredient = false;
                 for (const recipeIngredient of recipe.ingredients) {
                     if (recipeIngredient.ingredient.toLowerCase() == filterIngredient.toLowerCase()) {
@@ -60,7 +77,8 @@ function getRecipes() {
             }
         }
         if (filters['ustensils'].length > 0) {
-            for (const filterUstensils of filters['ustensils']) {
+            let filterUstensils = "";
+            for (filterUstensils of filters['ustensils']) {
                 let recipeHaveUstensil = false;
                 for (const recipeUstensil of recipe.ustensils) {
                     if (recipeUstensil.toLowerCase() == filterUstensils.toLowerCase()) {
@@ -73,7 +91,8 @@ function getRecipes() {
             }
         }
         if (filters['appliances'].length > 0) {
-            for (const filterAppliance of filters['appliances']) {
+            let filterAppliance = "";
+            for (filterAppliance of filters['appliances']) {
                 if (recipe.appliance.toLowerCase() !== filterAppliance.toLowerCase()) {
                     return false;
                 }
@@ -85,6 +104,9 @@ function getRecipes() {
     displayFiltersButtons(recipesToDisplay);
     return recipesToDisplay;
 }
+/**
+ * Display Recipes Cards
+ */
 function displayRecipesCards() {
     const recipes = getRecipes();
     clearRecipesCard();
@@ -100,23 +122,18 @@ function displayRecipesCards() {
         });
     }
 }
+/**
+ * Clear Recipes Cards
+ */
 function clearRecipesCard() {
     if (recipesSection) {
         recipesSection.innerHTML = "";
     }
 }
-displayRecipesCards();
-/*
-    Search
-*/
-recipeSearch === null || recipeSearch === void 0 ? void 0 : recipeSearch.addEventListener('input', (e) => {
-    const searchValue = e.target.value;
-    addRecipeFilter('search', searchValue);
-    displayRecipesCards();
-});
-/*
-    Filters Buttons
-*/
+/**
+ * display / update avanced filters buttons
+ * @param recipes List of displayed recipes
+ */
 function displayFiltersButtons(recipes) {
     const ingredients = [];
     const appliances = [];
@@ -142,9 +159,12 @@ function displayFiltersButtons(recipes) {
         filtersButtonsSections.appendChild(ustensilsFilter);
     }
 }
-/*
-    Filters Pills
-*/
+/**
+ * Display filters pills on click on filter button list
+ * Used in KeyFilterButton as callback
+ * @param type type of filter
+ * @param value value of filter
+ */
 function drawPillCallback(type, value) {
     const pillArleadyDrawn = document.querySelector(`.${type}-filter-pill[data-value="${value}"]`);
     if (pillArleadyDrawn) {
@@ -156,3 +176,9 @@ function drawPillCallback(type, value) {
         addRecipeFilter(type, value);
     }
 }
+displayRecipesCards();
+recipeSearch === null || recipeSearch === void 0 ? void 0 : recipeSearch.addEventListener('input', (e) => {
+    const searchValue = e.target.value;
+    addRecipeFilter('search', searchValue);
+    displayRecipesCards();
+});

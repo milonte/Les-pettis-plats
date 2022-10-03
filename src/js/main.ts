@@ -8,6 +8,7 @@ import KeyFilter from './components/KeyFilterButton';
 import KeyFilterPill from './components/KeyFilterPill';
 import RecipeCard from './components/RecipeCard';
 import { RecipeModel } from './model/RecipeModel';
+import { FiltersModel } from './model/filtersModel';
 
 const filtersResultsSections: HTMLElement | null = document.getElementById("filters-results");
 const filtersButtonsSections: HTMLElement | null = document.getElementById("filters-buttons");
@@ -15,14 +16,20 @@ const recipesSection: HTMLElement | null = document.getElementById("recipes-cont
 
 const recipeSearch: HTMLElement | null = document.getElementById("recipe-search");
 
-const filters = {
+const filters: FiltersModel = {
     'search': '',
     'ingredients': [],
     'appliances': [],
     'ustensils': []
 };
 
-function addRecipeFilter(key: string, value: string) {
+/**
+ * Add filter to recipe filters list
+ * and display corresponding recipes
+ * @param key type of filter
+ * @param value value of filter
+ */
+function addRecipeFilter(key: string, value: string): void {
     const beforeFilters = filters;
     if ('search' == key) {
         filters['search'] = value;
@@ -37,7 +44,13 @@ function addRecipeFilter(key: string, value: string) {
     }
 }
 
-function removeRecipeFilter(key: string, value: string) {
+/**
+ * Remove filter from recipe filters list
+ * and display corresponding recipes
+ * @param key type of filter
+ * @param value value of filter
+ */
+function removeRecipeFilter(key: string, value: string): void {
     const beforeFilters = filters;
     if (filters[key].includes(value)) {
         filters[key].splice(filters[key].indexOf(value), 1);
@@ -48,7 +61,11 @@ function removeRecipeFilter(key: string, value: string) {
     }
 }
 
-function getRecipes() {
+/**
+ * Get recipes corresponding to filters
+ * @returns {Array<RecipeModel>}
+ */
+function getRecipes(): Array<RecipeModel> {
     
     const recipesToDisplay = recipes.filter((recipe: RecipeModel) => {
 
@@ -59,7 +76,8 @@ function getRecipes() {
 
         // ingredients filter
         if (filters['ingredients'].length > 0) {
-            for (const filterIngredient of filters['ingredients']) {
+            let filterIngredient = "";
+            for (filterIngredient of filters['ingredients']) {
 
                 let recipeHaveIngredient = false;
                 for (const recipeIngredient of recipe.ingredients) { 
@@ -74,7 +92,8 @@ function getRecipes() {
         }
 
         if (filters['ustensils'].length > 0) {
-            for (const filterUstensils of filters['ustensils']) {
+            let filterUstensils = "";
+            for (filterUstensils of filters['ustensils']) {
 
                 let recipeHaveUstensil = false;
                 for (const recipeUstensil of recipe.ustensils) { 
@@ -89,7 +108,8 @@ function getRecipes() {
         }
 
         if (filters['appliances'].length > 0) { 
-            for (const filterAppliance of filters['appliances']) { 
+            let filterAppliance = "";
+            for (filterAppliance of filters['appliances']) { 
                 if (recipe.appliance.toLowerCase() !== filterAppliance.toLowerCase()) {
                     return false;
                 }
@@ -106,7 +126,10 @@ function getRecipes() {
     return recipesToDisplay;
 }
 
-function displayRecipesCards() {
+/**
+ * Display Recipes Cards
+ */
+function displayRecipesCards(): void {
 
     const recipes = getRecipes();
     clearRecipesCard();
@@ -125,30 +148,19 @@ function displayRecipesCards() {
     }
 }
 
-function clearRecipesCard() {
+/**
+ * Clear Recipes Cards
+ */
+function clearRecipesCard(): void {
     if (recipesSection) {
         recipesSection.innerHTML = "";
     }
 }
 
-displayRecipesCards();
-
-
-/* 
-    Search
-*/
-recipeSearch?.addEventListener('input', (e : any) => {
-    const searchValue: string = e.target.value;
-
-    addRecipeFilter('search', searchValue);
-
-    displayRecipesCards();
-
-});
-
-/*
-    Filters Buttons
-*/
+/**
+ * display / update avanced filters buttons
+ * @param recipes List of displayed recipes
+ */
 function displayFiltersButtons(recipes: Array<RecipeModel>) {
 
     const ingredients : Array<string> = [];
@@ -180,10 +192,12 @@ function displayFiltersButtons(recipes: Array<RecipeModel>) {
     }
 }
 
-
-/* 
-    Filters Pills
-*/
+/**
+ * Display filters pills on click on filter button list
+ * Used in KeyFilterButton as callback
+ * @param type type of filter
+ * @param value value of filter
+ */
 function drawPillCallback(type: string, value: string) {
         const pillArleadyDrawn = document.querySelector(`.${type}-filter-pill[data-value="${value}"]`);
 
@@ -196,6 +210,19 @@ function drawPillCallback(type: string, value: string) {
             
             addRecipeFilter(type, value);
         }
-    
 }
+
+
+displayRecipesCards();
+
+recipeSearch?.addEventListener('input', (e : any) => {
+    const searchValue: string = e.target.value;
+
+    addRecipeFilter('search', searchValue);
+
+    displayRecipesCards();
+
+});
+
+
     
