@@ -40,7 +40,7 @@ export default class RecipeCard {
 
         card.innerHTML = `
             <div class="card-header p-0">
-                <img class="card-img-top img-fluid" src="https://via.placeholder.com/400">
+                <img class="card-img-top img-fluid" src="https://via.placeholder.com/400" alt="${name}" width="400" height="400">
             </div>
             <div class="card-body">
                 <div class="col">

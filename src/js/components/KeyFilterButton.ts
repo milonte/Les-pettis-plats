@@ -15,6 +15,7 @@ export default class KeyFilterButton {
      * @returns 
      */
     getDOMElement() {
+
         const filterElement = document.createElement('div');
         filterElement.classList.add('dropdown', 'col-lg-2', 'col-sm-3', 'mx-2', 'd-flex');
 
@@ -22,36 +23,41 @@ export default class KeyFilterButton {
         filterButton.setAttribute('id', this.type + '-dropdown');
         filterButton.setAttribute('type', 'button');
         filterButton.setAttribute('data-bs-toggle', 'dropdown');
-        filterButton.classList.add('btn', 'dropdown-toggle', 'w-100');
+        filterButton.classList.add('btn', 'dropdown-toggle', 'w-100', 'text-start');
+        filterButton.innerHTML = this.type.toLowerCase();
         
         const filterInput = document.createElement('input');
         filterInput.setAttribute('id', this.type + '-input');
         filterInput.setAttribute('type', 'search');
-        filterInput.classList.add('border-0', 'text-white', 'col-10', 'fw-bold');
+        filterInput.classList.add('border-0', 'text-white', 'col-10', 'fw-bold', 'mb-2', 'mx-4');
         
-        const filterList = document.createElement('ul');
-        filterList.classList.add('dropdown-menu', this.type + "-list", "w-100");
-        filterList.setAttribute('aria-labelledby', this.type + '-dropdown');
+        const filterDropdown = document.createElement('div');
+        filterDropdown.classList.add('dropdown-menu', this.type + "-list", "w-100");
+        filterDropdown.setAttribute('aria-labelledby', this.type + '-dropdown');
+
+
+        const filterUl = document.createElement('ul');
+        filterUl.classList.add('d-flex', 'row', 'p-0', 'm-0');
 
         switch (this.type) { 
             case 'ingredients':
                 filterButton.classList.add('btn-primary');
                 filterInput.classList.add('bg-primary');
-                filterList.classList.add('bg-primary');
+                filterDropdown.classList.add('bg-primary');
                 filterInput.setAttribute('placeholder', 'Ingredients');
                 break;
                 
                 case 'appliances':
                     filterButton.classList.add('btn-success');
                     filterInput.classList.add('bg-success');
-                    filterList.classList.add('bg-success');
+                    filterDropdown.classList.add('bg-success');
                     filterInput.setAttribute('placeholder', 'Appareils');
                     break;
                     
                     case 'ustensils':
                         filterButton.classList.add('btn-danger');
                         filterInput.classList.add('bg-danger');
-                        filterList.classList.add('bg-danger');
+                        filterDropdown.classList.add('bg-danger');
                         filterInput.setAttribute('placeholder', 'Ustensiles');
                 break;
         }
@@ -67,12 +73,13 @@ export default class KeyFilterButton {
             link.innerHTML = data;
 
             li.appendChild(link);
-            filterList.appendChild(li);
+            filterUl.appendChild(li);
         });
-
-        filterButton.appendChild(filterInput);
+        
+        filterDropdown.appendChild(filterInput);
+        filterDropdown.appendChild(filterUl);
         filterElement.appendChild(filterButton);
-        filterElement.appendChild(filterList);
+        filterElement.appendChild(filterDropdown);
 
         /* --- Listeners --- */
 
@@ -83,7 +90,7 @@ export default class KeyFilterButton {
             // focus input field
             filterInput.focus();
             // Reset visibility of filters in list
-            for (const item of filterList.children) { 
+            for (const item of filterUl.children) { 
                 item.removeAttribute("hidden");
             }
             // Set big button
@@ -113,7 +120,7 @@ export default class KeyFilterButton {
             let item: any;
 
             // Hide / Show filter item on list
-            for (item of filterList.children) { 
+            for (item of filterUl.children) { 
                 const itemValue : string = item.title.toLowerCase();
 
                 if (itemValue.indexOf(searchValue) == -1) {
@@ -127,7 +134,7 @@ export default class KeyFilterButton {
         /* 
             Filter change value Listener
         */
-        for (const item of filterList.children) { 
+        for (const item of filterUl.children) { 
             item.addEventListener('click', (e: any) => {
 
                 const value = e.target.parentNode.title;
