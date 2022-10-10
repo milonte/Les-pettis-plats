@@ -3,12 +3,12 @@ import '../scss/main.scss';
 
 // Import all of Bootstrap's JS
 import 'bootstrap';
-import { recipes } from '../../data/recipes';
 import KeyFilter from './components/KeyFilterButton';
 import KeyFilterPill from './components/KeyFilterPill';
 import RecipeCard from './components/RecipeCard';
 import { RecipeModel } from './model/RecipeModel';
 import { FiltersModel } from './model/filtersModel';
+import Api from '../api/Api';
 
 const filtersResultsSections: HTMLElement | null = document.getElementById("filters-results");
 const filtersButtonsSections: HTMLElement | null = document.getElementById("filters-buttons");
@@ -73,64 +73,8 @@ function removeRecipeFilter(key: string, value: string): void {
  */
 function getRecipes(): Array<RecipeModel> {
     
-    const recipesToDisplay = recipes.filter((recipe: RecipeModel) => {
-
-        // search bar filter 
-        if (filters['search'].length > 2) {
-            if (
-                !recipe.name.toLowerCase().includes(filters['search'].toLowerCase())
-                && !recipe.description.toLowerCase().includes(filters['search'].toLowerCase())
-                && !recipe.ingredients.some(ingredient => ingredient.ingredient.toLowerCase().includes(filters['search'].toLowerCase()))
-            ) {
-                return false;
-            } 
-        }
-
-        // ingredients filter
-        if (filters['ingredients'].length > 0) {
-            let filterIngredient = "";
-            for (filterIngredient of filters['ingredients']) {
-
-                let recipeHaveIngredient = false;
-                for (const recipeIngredient of recipe.ingredients) { 
-                    if (recipeIngredient.ingredient.toLowerCase() == filterIngredient.toLowerCase()) {
-                        recipeHaveIngredient = true;
-                    }
-                }
-                if (!recipeHaveIngredient) {
-                    return false;
-                }
-            }
-        }
-
-        if (filters['ustensils'].length > 0) {
-            let filterUstensils = "";
-            for (filterUstensils of filters['ustensils']) {
-
-                let recipeHaveUstensil = false;
-                for (const recipeUstensil of recipe.ustensils) { 
-                    if (recipeUstensil.toLowerCase() == filterUstensils.toLowerCase()) {
-                        recipeHaveUstensil = true;
-                    }
-                }
-                if (!recipeHaveUstensil) {
-                    return false;
-                }
-            }
-        }
-
-        if (filters['appliances'].length > 0) { 
-            let filterAppliance = "";
-            for (filterAppliance of filters['appliances']) { 
-                if (recipe.appliance.toLowerCase() !== filterAppliance.toLowerCase()) {
-                    return false;
-                }
-            }
-        }
-
-        return recipe;
-
-    });
+    const api = new Api(filters);
+    const recipesToDisplay = api.getRecipes();
     
     /* update filters buttons */
     displayFiltersButtons(recipesToDisplay);
