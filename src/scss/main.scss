@@ -2,6 +2,12 @@
 @import "~bootstrap/scss/bootstrap";
 
 
+header {
+    h1 {
+        font-size: 2.5rem;
+    }
+}
+
 .bg-secondary {
     background-color: config.$bg-secondary !important;
 }
@@ -55,8 +61,23 @@
     }
 }
 
-input {
-    height: 40px;
+.dropdown-toggle {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z" /></svg>');
+    background-position: 97% 50%;
+    background-repeat: no-repeat;
+
+    &::after {
+        content: none !important;
+    }
+
+    input {
+        height: 40px;
+
+        &::placeholder {
+            color: white;
+        }
+    }
+
 }
 
 .dropdown-toggle::after {
@@ -72,9 +93,4 @@ input {
 .dropdown-menu.show {
     display: flex;
     flex-wrap: wrap;
-
-    /*  li {
-        flex: 33%;
-        text-overflow: ellipsis;
-    } */
 }
