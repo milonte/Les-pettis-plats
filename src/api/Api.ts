@@ -16,24 +16,28 @@ export default class Api {
 
     filterRecipesBySearchName(recipesToFilter: Array<RecipeModel>): Array<RecipeModel> { 
 
-        const recipesToDisplay: Array<RecipeModel> = [];
+        if(this.filters['search'].length > 2) {
+            const recipesToDisplay: Array<RecipeModel> = [];
 
-        for (let j = 0; j < recipesToFilter.length; j++) { 
-            if(recipesToFilter[j].name.toLowerCase().includes(this.filters['search'].toLowerCase())) {
-                recipesToDisplay.push(recipesToFilter[j]);
-            } else if (recipesToFilter[j].description.toLowerCase().includes(this.filters['search'].toLowerCase())) {
-                recipesToDisplay.push(recipesToFilter[j]);
-            } else {
-                for (let k = 0; k < recipesToFilter[j].ingredients.length; k++) { 
-                    if (recipesToFilter[j].ingredients[k].ingredient.toLowerCase() == this.filters['search'].toLowerCase()) {
-                        recipesToDisplay.push(recipesToFilter[j]);
-                        break; 
+            for (let j = 0; j < recipesToFilter.length; j++) { 
+                if(recipesToFilter[j].name.toLowerCase().includes(this.filters['search'].toLowerCase())) {
+                    recipesToDisplay.push(recipesToFilter[j]);
+                } else if (recipesToFilter[j].description.toLowerCase().includes(this.filters['search'].toLowerCase())) {
+                    recipesToDisplay.push(recipesToFilter[j]);
+                } else {
+                    for (let k = 0; k < recipesToFilter[j].ingredients.length; k++) { 
+                        if (recipesToFilter[j].ingredients[k].ingredient.toLowerCase() == this.filters['search'].toLowerCase()) {
+                            recipesToDisplay.push(recipesToFilter[j]);
+                            break; 
+                        }
                     }
                 }
             }
-        }
 
-        return recipesToDisplay;
+                return recipesToDisplay;
+        } else {
+            return recipesToFilter;
+            }
     }
 
     filterRecipesByAvancedFilters(recipesToFilter: Array<RecipeModel>): Array<RecipeModel> { 
