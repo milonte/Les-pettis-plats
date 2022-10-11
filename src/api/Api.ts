@@ -16,20 +16,24 @@ export default class Api {
 
     filterRecipesBySearchName(recipesToFilter: Array<RecipeModel>): Array<RecipeModel> { 
 
-        return recipesToFilter.filter((recipe: RecipeModel) => {
+        const recipesToDisplay: Array<RecipeModel> = [];
 
-            // search bar filter 
-            if (this.filters['search'].length > 2) {
-                if (
-                    !recipe.name.toLowerCase().includes(this.filters['search'].toLowerCase())
-                    && !recipe.description.toLowerCase().includes(this.filters['search'].toLowerCase())
-                    && !recipe.ingredients.some(ingredient => ingredient.ingredient.toLowerCase().includes(this.filters['search'].toLowerCase()))
-                ) {
-                    return false;
+        for (let j = 0; j < recipesToFilter.length; j++) { 
+            if(recipesToFilter[j].name.toLowerCase().includes(this.filters['search'].toLowerCase())) {
+                recipesToDisplay.push(recipesToFilter[j]);
+            } else if (recipesToFilter[j].description.toLowerCase().includes(this.filters['search'].toLowerCase())) {
+                recipesToDisplay.push(recipesToFilter[j]);
+            } else {
+                for (let k = 0; k < recipesToFilter[j].ingredients.length; k++) { 
+                    if (recipesToFilter[j].ingredients[k].ingredient.toLowerCase() == this.filters['search'].toLowerCase()) {
+                        recipesToDisplay.push(recipesToFilter[j]);
+                        break; 
+                    }
                 }
             }
-            return recipe;
-        });
+        }
+
+        return recipesToDisplay;
     }
 
     filterRecipesByAvancedFilters(recipesToFilter: Array<RecipeModel>): Array<RecipeModel> { 
