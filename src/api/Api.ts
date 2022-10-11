@@ -16,20 +16,21 @@ export default class Api {
 
     filterRecipesBySearchName(recipesToFilter: Array<RecipeModel>): Array<RecipeModel> { 
 
-        return recipesToFilter.filter((recipe: RecipeModel) => {
+        if (this.filters['search'].length > 2) {
 
+            return recipesToFilter.filter((recipe: RecipeModel) => {
             // search bar filter 
-            if (this.filters['search'].length > 2) {
                 if (
-                    !recipe.name.toLowerCase().includes(this.filters['search'].toLowerCase())
-                    && !recipe.description.toLowerCase().includes(this.filters['search'].toLowerCase())
-                    && !recipe.ingredients.some(ingredient => ingredient.ingredient.toLowerCase().includes(this.filters['search'].toLowerCase()))
+                    recipe.name.toLowerCase().includes(this.filters['search'].toLowerCase())
+                    || recipe.description.toLowerCase().includes(this.filters['search'].toLowerCase())
+                    || recipe.ingredients.some(ingredient => ingredient.ingredient.toLowerCase().includes(this.filters['search'].toLowerCase()))
                 ) {
-                    return false;
+                    return recipe;
                 }
-            }
-            return recipe;
-        });
+            });
+        } else {
+            return recipesToFilter;
+        }
     }
 
     filterRecipesByAvancedFilters(recipesToFilter: Array<RecipeModel>): Array<RecipeModel> { 
