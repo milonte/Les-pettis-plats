@@ -1,6 +1,7 @@
 import { recipes } from "../../data/recipes";
 import { FiltersModel } from "../js/model/filtersModel";
 import { RecipeModel } from "../js/model/RecipeModel";
+import formatFilterName from "../js/services/formatFilterName";
 
 export default class Api {
 
@@ -20,13 +21,13 @@ export default class Api {
             const recipesToDisplay: Array<RecipeModel> = [];
 
             for (let j = 0; j < recipesToFilter.length; j++) { 
-                if(recipesToFilter[j].name.toLowerCase().includes(this.filters['search'].toLowerCase())) {
+                if(formatFilterName(recipesToFilter[j].name).includes(formatFilterName(this.filters['search']))) {
                     recipesToDisplay.push(recipesToFilter[j]);
-                } else if (recipesToFilter[j].description.toLowerCase().includes(this.filters['search'].toLowerCase())) {
+                } else if (formatFilterName(recipesToFilter[j].description).includes(formatFilterName(this.filters['search']))) {
                     recipesToDisplay.push(recipesToFilter[j]);
                 } else {
                     for (let k = 0; k < recipesToFilter[j].ingredients.length; k++) { 
-                        if (recipesToFilter[j].ingredients[k].ingredient.toLowerCase() == this.filters['search'].toLowerCase()) {
+                        if (formatFilterName(recipesToFilter[j].ingredients[k].ingredient).includes(formatFilterName(this.filters['search']))) {
                             recipesToDisplay.push(recipesToFilter[j]);
                             break; 
                         }
@@ -34,10 +35,10 @@ export default class Api {
                 }
             }
 
-                return recipesToDisplay;
+            return recipesToDisplay;
         } else {
             return recipesToFilter;
-            }
+        }
     }
 
     filterRecipesByAvancedFilters(recipesToFilter: Array<RecipeModel>): Array<RecipeModel> { 
@@ -49,7 +50,7 @@ export default class Api {
 
                 let recipeHaveIngredient = false;
                 for (const recipeIngredient of recipe.ingredients) { 
-                    if (recipeIngredient.ingredient.toLowerCase() == filterIngredient.toLowerCase()) {
+                    if (formatFilterName(recipeIngredient.ingredient).includes(formatFilterName(filterIngredient))) {
                         recipeHaveIngredient = true;
                     }
                 }
@@ -65,7 +66,7 @@ export default class Api {
 
                 let recipeHaveUstensil = false;
                 for (const recipeUstensil of recipe.ustensils) { 
-                    if (recipeUstensil.toLowerCase() == filterUstensils.toLowerCase()) {
+                    if (formatFilterName(recipeUstensil).includes(formatFilterName(filterUstensils))) {
                         recipeHaveUstensil = true;
                     }
                 }
@@ -78,7 +79,7 @@ export default class Api {
         if (this.filters['appliances'].length > 0) { 
             let filterAppliance = "";
             for (filterAppliance of this.filters['appliances']) { 
-                if (recipe.appliance.toLowerCase() !== filterAppliance.toLowerCase()) {
+                if (!formatFilterName(recipe.appliance).includes(formatFilterName(filterAppliance))) {
                     return false;
                 }
             }

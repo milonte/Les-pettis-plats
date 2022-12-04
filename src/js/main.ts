@@ -9,6 +9,7 @@ import RecipeCard from './components/RecipeCard';
 import { RecipeModel } from './model/RecipeModel';
 import { FiltersModel } from './model/filtersModel';
 import Api from '../api/Api';
+import formatFilterName from './services/formatFilterName';
 
 const filtersResultsSections: HTMLElement | null = document.getElementById("filters-results");
 const filtersButtonsSections: HTMLElement | null = document.getElementById("filters-buttons");
@@ -125,19 +126,27 @@ function displayFiltersButtons(recipes: Array<RecipeModel>) {
 
     recipes.forEach((recipe: RecipeModel) => { 
         recipe.ingredients.forEach(ingredient => {
-            if (!ingredients.includes(ingredient.ingredient)) {
-                ingredients.push(ingredient.ingredient);
+            if (!ingredients.includes(formatFilterName(ingredient.ingredient))) {
+
+                /* check if ingredient don't exists as plural
+                ex : if "Banane" exists, "Bananes" does not push */
+                if ("S" == formatFilterName(ingredient.ingredient)[ingredient.ingredient.length - 1].toUpperCase()
+                    && ingredients.includes(formatFilterName(ingredient.ingredient).slice(0, ingredient.ingredient.length - 1))) {
+                    return;
+                } else {
+                    ingredients.push(formatFilterName(ingredient.ingredient));
+                }
             }
         });
-        !appliances.includes(recipe.appliance) ? appliances.push(recipe.appliance) : null;
+        !appliances.includes(formatFilterName(recipe.appliance)) ? appliances.push(formatFilterName(recipe.appliance)) : null;
         recipe.ustensils.forEach(ustensil => {
-            !ustensils.includes(ustensil) ? ustensils.push(ustensil) : null;
+            !ustensils.includes(formatFilterName(ustensil)) ? ustensils.push(formatFilterName(ustensil)) : null;
         });
     });
 
-    const ingredientsFilter = new KeyFilter("ingredients", ingredients, drawPillCallback).getDOMElement();
-    const appliancesFilter = new KeyFilter("appliances", appliances, drawPillCallback).getDOMElement();
-    const ustensilsFilter = new KeyFilter("ustensils", ustensils, drawPillCallback).getDOMElement();
+    const ingredientsFilter = new KeyFilter("ingredients", ingredients.sort(), drawPillCallback).getDOMElement();
+    const appliancesFilter = new KeyFilter("appliances", appliances.sort(), drawPillCallback).getDOMElement();
+    const ustensilsFilter = new KeyFilter("ustensils", ustensils.sort(), drawPillCallback).getDOMElement();
 
     if (filtersButtonsSections) {
         filtersButtonsSections.innerHTML = "";
@@ -174,7 +183,7 @@ displayRecipesCards();
 recipeSearch?.addEventListener('input', (e : any) => {
     const searchValue: string = e.target.value;
 
-    addRecipeFilter('search', searchValue);
+    addRecipeFilter('search', formatFilterName(searchValue));
 
     displayRecipesCards();
 
