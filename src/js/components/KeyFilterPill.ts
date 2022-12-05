@@ -2,12 +2,14 @@ export default class KeyFilterPill {
 
     type: string;
     name: string;
-    erasePillCallbackFunction: CallableFunction;
+    onClickCallback?: CallableFunction;
 
-    constructor(type: string, name: string,  erasePillCallbackFunction : CallableFunction) {
+    constructor(type: string, name: string,  onClickCallback? : CallableFunction) {
         this.type = type;
         this.name = name;
-        this.erasePillCallbackFunction = erasePillCallbackFunction;
+        if (onClickCallback) {
+            this.onClickCallback = onClickCallback;
+        }
     }
 
     getDOMElement() { 
@@ -42,12 +44,15 @@ export default class KeyFilterPill {
                 break;
         }
 
+
         pillButtonElement.addEventListener("click", () => {
+            if (this.onClickCallback) {
             const pillToRemove: HTMLElement | null = document.querySelector(`.btn[data-value='${this.name}']`);
 
             if (filtersResultsSections && pillToRemove) {
                 filtersResultsSections.removeChild(pillToRemove);
-                this.erasePillCallbackFunction(this.type, this.name);
+                this.onClickCallback(this.type, this.name);
+            }
             }
         });
 

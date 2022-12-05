@@ -2,12 +2,14 @@ export default class KeyFilterButton {
 
     type: string;
     datas: Array<string>;
-    pillCallbackFunction: CallableFunction;
+    onClickCallback?: CallableFunction;
 
-    constructor(type : string, datas : Array<string>, pillCallbackFunction : CallableFunction ) {
+    constructor(type : string, datas : Array<string>, onClickCallback? : CallableFunction ) {
         this.type = type;
         this.datas = datas;
-        this.pillCallbackFunction = pillCallbackFunction;
+        if (onClickCallback) {
+            this.onClickCallback = onClickCallback;
+        }
     }
 
     /**
@@ -142,7 +144,9 @@ export default class KeyFilterButton {
                 // Reset input field value to placeholder value
                 filterInput.value = "";
                 // Display Filter Pill callback function
-                this.pillCallbackFunction(this.type, value);
+                if (this.onClickCallback) {
+                    this.onClickCallback(this.type, value);
+                }
             });
         }
         

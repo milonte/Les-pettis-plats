@@ -3,7 +3,7 @@ import '../scss/main.scss';
 
 // Import all of Bootstrap's JS
 import 'bootstrap';
-import KeyFilter from './components/KeyFilterButton';
+import KeyFilterButton from './components/KeyFilterButton';
 import KeyFilterPill from './components/KeyFilterPill';
 import RecipeCard from './components/RecipeCard';
 import { RecipeModel } from './model/RecipeModel';
@@ -31,7 +31,6 @@ const filters: FiltersModel = {
  * @param value value of filter
  */
 function addRecipeFilter(key: string, value: string): void {
-    const beforeFilters: FiltersModel = filters;
     if ('search' == key) {
         filters['search'] = value;
     } else if ('ingredients' == key && !filters['ingredients'].includes(value)) {
@@ -42,9 +41,7 @@ function addRecipeFilter(key: string, value: string): void {
         filters['ustensils'].push(value);
     }
 
-    if (beforeFilters == filters) {
-        displayRecipesCards();
-    }
+    displayRecipes();
 }
 
 /**
@@ -54,7 +51,6 @@ function addRecipeFilter(key: string, value: string): void {
  * @param value value of filter
  */
 function removeRecipeFilter(key: string, value: string): void {
-    const beforeFilters = filters;
     if ('ingredients' == key && filters['ingredients'].includes(value)) {
         filters['ingredients'].splice(filters['ingredients'].indexOf(value), 1);
     } else if ('appliances' == key && filters['appliances'].includes(value)) {
@@ -63,9 +59,8 @@ function removeRecipeFilter(key: string, value: string): void {
         filters['ustensils'].splice(filters['ustensils'].indexOf(value), 1); 
     }
 
-    if (beforeFilters == filters) {
-        displayRecipesCards();
-    }
+    displayRecipes();
+    
 }
 
 /**
@@ -73,10 +68,8 @@ function removeRecipeFilter(key: string, value: string): void {
  * @returns {Array<RecipeModel>}
  */
 function getRecipes(): Array<RecipeModel> {
-    
     const api = new Api(filters);
     const recipesToDisplay = api.getRecipes();
-    
     /* update filters buttons */
     displayFiltersButtons(recipesToDisplay);
 
@@ -86,17 +79,20 @@ function getRecipes(): Array<RecipeModel> {
 /**
  * Display Recipes Cards
  */
-function displayRecipesCards(): void {
-
+function displayRecipes(): void {
     const recipes = getRecipes();
-    clearRecipesCard();
-
+    // remove all cards from recipes section
+    if (recipesSection) {
+        recipesSection.innerHTML = "";
+    }
+    // display message if no recipe to display
     if (recipes.length <= 0) {
         const noResultDiv = document.createElement("div");
         noResultDiv.innerHTML = '« Aucune recette ne correspond à votre critère... vous pouvez chercher « tarte aux pommes », « poisson », etc';
-        
         recipesSection?.appendChild(noResultDiv);
-    } else {
+    }
+    // siplay recipes in recipes section
+    else {
         recipes.forEach((recipe: RecipeModel) => { 
             const recipeCard = new RecipeCard(recipe).getDOMElement();
         
@@ -106,25 +102,17 @@ function displayRecipesCards(): void {
 }
 
 /**
- * Clear Recipes Cards
- */
-function clearRecipesCard(): void {
-    if (recipesSection) {
-        recipesSection.innerHTML = "";
-    }
-}
-
-/**
  * display / update avanced filters buttons
  * @param recipes List of displayed recipes
  */
 function displayFiltersButtons(recipes: Array<RecipeModel>) {
-
     const ingredients : Array<string> = [];
     const appliances : Array<string> = [];
     const ustensils: Array<string> = [];
 
-    recipes.forEach((recipe: RecipeModel) => { 
+    // update filters to show from displayed recipes
+    // ingredients filters
+    recipes.forEach((recipe: RecipeModel) => {
         recipe.ingredients.forEach(ingredient => {
             if (!ingredients.includes(formatFilterName(ingredient.ingredient))) {
 
@@ -138,19 +126,20 @@ function displayFiltersButtons(recipes: Array<RecipeModel>) {
                 }
             }
         });
+        // appliances filters
         !appliances.includes(formatFilterName(recipe.appliance)) ? appliances.push(formatFilterName(recipe.appliance)) : null;
+        // ustensils filters
         recipe.ustensils.forEach(ustensil => {
             !ustensils.includes(formatFilterName(ustensil)) ? ustensils.push(formatFilterName(ustensil)) : null;
         });
     });
 
-    const ingredientsFilter = new KeyFilter("ingredients", ingredients.sort(), drawPillCallback).getDOMElement();
-    const appliancesFilter = new KeyFilter("appliances", appliances.sort(), drawPillCallback).getDOMElement();
-    const ustensilsFilter = new KeyFilter("ustensils", ustensils.sort(), drawPillCallback).getDOMElement();
-
+    // display filters buttons, alphabeticaly sorted
+    const ingredientsFilter = new KeyFilterButton("ingredients", ingredients.sort(), drawPillOnClick).getDOMElement();
+    const appliancesFilter = new KeyFilterButton("appliances", appliances.sort(), drawPillOnClick).getDOMElement();
+    const ustensilsFilter = new KeyFilterButton("ustensils", ustensils.sort(), drawPillOnClick).getDOMElement();
     if (filtersButtonsSections) {
         filtersButtonsSections.innerHTML = "";
-        
         filtersButtonsSections.appendChild(ingredientsFilter);
         filtersButtonsSections.appendChild(appliancesFilter);
         filtersButtonsSections.appendChild(ustensilsFilter);
@@ -163,30 +152,28 @@ function displayFiltersButtons(recipes: Array<RecipeModel>) {
  * @param type type of filter
  * @param value value of filter
  */
-function drawPillCallback(type: string, value: string) {
-        const pillArleadyDrawn = document.querySelector(`.${type}-filter-pill[data-value="${value}"]`);
-
-        if (pillArleadyDrawn) {
-            return;
-        } else {
-
+function drawPillOnClick(type: string, value: string) {
+    // if no pill with same name already displayed, display new one
+    const pillArleadyDrawn = document.querySelector(`.${type}-filter-pill[data-value="${value}"]`);
+    if (pillArleadyDrawn) {
+        return;
+    } else {
         const pillButtonElement = new KeyFilterPill(type, value, removeRecipeFilter).getDOMElement();
-            filtersResultsSections?.appendChild(pillButtonElement);
-            
-            addRecipeFilter(type, value);
-        }
+        filtersResultsSections?.appendChild(pillButtonElement);
+        // add filter to global filters, then update displayed recipes
+        addRecipeFilter(type, value);
+    }
 }
 
+// init
+// diplay all recipes, no filters
+displayRecipes();
 
-displayRecipesCards();
-
+// update search filter (then filter and display filtered recipes) on search input changes
 recipeSearch?.addEventListener('input', (e : any) => {
     const searchValue: string = e.target.value;
-
     addRecipeFilter('search', formatFilterName(searchValue));
-
-    displayRecipesCards();
-
+    displayRecipes();
 });
 
 
