@@ -15,27 +15,23 @@ export default class Api {
         return this.filterRecipesByAvancedFilters(this.filterRecipesBySearchName(recipes));
      }
 
-    filterRecipesBySearchName(recipesToFilter: Array<RecipeModel>): Array<RecipeModel> { 
+     filterRecipesBySearchName(recipesToFilter: Array<RecipeModel>): Array<RecipeModel> { 
 
-        if(this.filters['search'].length > 2) {
-            const recipesToDisplay: Array<RecipeModel> = [];
+        if (this.filters['search'].length > 2) {
 
-            for (let j = 0; j < recipesToFilter.length; j++) { 
-                if(formatFilterName(recipesToFilter[j].name).includes(formatFilterName(this.filters['search']))) {
-                    recipesToDisplay.push(recipesToFilter[j]);
-                } else if (formatFilterName(recipesToFilter[j].description).includes(formatFilterName(this.filters['search']))) {
-                    recipesToDisplay.push(recipesToFilter[j]);
-                } else {
-                    for (let k = 0; k < recipesToFilter[j].ingredients.length; k++) { 
-                        if (formatFilterName(recipesToFilter[j].ingredients[k].ingredient).includes(formatFilterName(this.filters['search']))) {
-                            recipesToDisplay.push(recipesToFilter[j]);
-                            break; 
-                        }
-                    }
+            return recipesToFilter.filter((recipe: RecipeModel) => {
+            // search bar filter 
+                if (
+                    // if found search in recipe name
+                    formatFilterName(recipe.name).includes(formatFilterName(this.filters['search']))
+                    // or if found search in recipe description
+                    || formatFilterName(recipe.description).includes(formatFilterName(this.filters['search']))
+                    // or if found search in recipe ingredients
+                    || recipe.ingredients.some(ingredient => formatFilterName(ingredient.ingredient).includes(formatFilterName(this.filters['search'])))
+                ) {
+                    return recipe;
                 }
-            }
-
-            return recipesToDisplay;
+            });
         } else {
             return recipesToFilter;
         }
