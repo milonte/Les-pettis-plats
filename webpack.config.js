@@ -4,7 +4,7 @@ const path = require('path');
 
 module.exports = {
     mode: 'development',
-    entry: './src/js/main.js',
+    entry: './src/js/main.ts',
     plugins: [new miniCssExtractPlugin()],
     output: {
         filename: 'main.js',
@@ -13,12 +13,27 @@ module.exports = {
     devServer: {
         static: path.resolve(__dirname, 'dist'),
         port: 8080,
-        hot: true
+        hot: true,
+        compress: true
+    },
+    resolve: {
+        extensions: [".ts", ".js"],
     },
     module: {
         rules: [
             {
+                test: /\.(ts|js)?$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: "babel-loader",
+                    options: {
+                        presets: ["@babel/preset-env", "@babel/preset-typescript"],
+                    },
+                },
+            },
+            {
                 test: /\.(scss)$/,
+                exclude: /node_modules/,
                 use: [
                     {
                         loader: miniCssExtractPlugin.loader

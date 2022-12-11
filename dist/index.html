@@ -7,23 +7,48 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <link href="./main.css" rel="stylesheet" />
-    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="icon" type="image/png" href="images/logo.jpg">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Les petits plats">
-    <link href="https://fonts.googleapis.com/css?family=DM+Sans&display=swap" rel="stylesheet">
     <title>Les petits plats</title>
 </head>
 
-<body>
+<body class="container">
     <header>
-
+        <div class="container text-center mt-4">
+            <img src="images/logo.jpg" alt="logo" width="80" height="80" />
+            <h1 class="text-danger fw-bold">Les petits plats</h1>
+        </div>
     </header>
     <main>
 
+        <!-- Search Bar -->
+        <div id="search-bar" class="p-1 bg-secondary shadow-sm mb-4 my-3">
+            <div class="input-group">
+                <input id="recipe-search" type="search" placeholder="Rechercher une recette"
+                    aria-describedby="button-addon" class="form-control border-0 bg-secondary">
+                <div class="input-group-append">
+                    <button id="button-addon" name="rechercher une recette" type="submit"
+                        class="btn btn-link text-dark">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="filters-results" class="mt-2">
+        </div>
+
+        <div id="filters-buttons" class="d-flex flex-row justify-content-start mt-2">
+        </div>
+
+        <div id="recipes-container" class="d-flex flex-row p-2 flex-wrap mt-2"></div>
+
     </main>
 
-    <script type="module" src="./main.js"></script>
+    <script src="./main.js">
+    </script>
 </body>
 
 </html>

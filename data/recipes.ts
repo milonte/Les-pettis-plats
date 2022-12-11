@@ -1,4 +1,6 @@
-export const recipes = [
+import { RecipeModel } from "../src/js/model/RecipeModel";
+
+export const recipes: RecipeModel[] = [
   {
     "id": 1,
     "name": "Limonade de Coco",
